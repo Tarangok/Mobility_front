@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="block"></div>
+</body>
+<script src="js/jquery-3.6.0.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script>
+    console.log($.cookie('auth', true));
+    console.log($.cookie('auth'));
+    $.ajax({
+        method: "GET",
+        url: "some.php",
+        data: { name: "John", location: "Boston" }
+    }).done(function( msg ) {
+        alert( "Data Saved: " + msg );
+    });
+</script>
+</html>
