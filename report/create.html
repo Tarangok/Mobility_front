@@ -19,9 +19,6 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/role/list">Роли</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/device/list">Станки</a>
-                </li>
             </ul>
             <div class="d-flex">
                 <a href="/user/logout" class="btn btn-success">Выйти</a>
@@ -34,19 +31,15 @@
     <form action="/report/create", method="post">
         <div class="mb-3">
             <label class="form-label">Заявитель</label>
-            <select class="form-select" name="user">
-            {% for user in users %}
-                <option value="{{ user.id }}">{{ user.name }}</option>
-            {% end %}
-            </select>
+            <input type="text" class="form-control" value="{{user.name}}" name="name" disabled>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Номер накладной</label>
+            <input type="text" class="form-control" value="" name="nakl">
         </div>
         <div class="mb-3">
             <label class="form-label">Техническое средство</label>
-            <select class="form-select" name="device">
-            {% for device in devices %}
-                <option value="{{ device.id }}">{{ device.name }}</option>
-            {% end %}
-            </select>
+            <input type="text" class="form-control" value="" name="device">
         </div>
         <div class="mb-3">
             <label class="form-label">Описание</label>

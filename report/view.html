@@ -19,9 +19,6 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/role/list">Роли</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/device/list">Станки</a>
-                </li>
             </ul>
             <div class="d-flex">
                 <a href="/user/logout" class="btn btn-success">Выйти</a>
@@ -31,37 +28,161 @@
 </nav>
 <div class="container">
     <h2>Просмотр заявки</h2>
-    <form action="localhost:8888/api/new_report", method="post">
         <div class="mb-3">
             <label class="form-label">Заявитель</label>
             <input type="text" class="form-control" value="{{user}}">
         </div>
         <div class="mb-3">
+            <label class="form-label">Номер накладной</label>
+            <input type="text" class="form-control" value="{{nakl}}">
+        </div>
+        <div class="mb-3">
             <label class="form-label">Техническое средство</label>
-            <input type="text" class="form-control" value="{{ts}}">
+<!--            <input type="text" class="form-control" value="{{ts}}">-->
             <input type="text" class="form-control" value="{{ts_name}}">
         </div>
         <div class="mb-3">
             <label class="form-label">Описание</label>
-            <input type="text" class="form-control" value="{{description}}">
+            <input type="text" class="form-control" value="{{description}}" id="decr">
         </div>
         <div class="mb-3">
             <label class="form-label">Статус</label>
-            <input type="text" class="form-control" value="{{status}}">
+            <input type="text" class="form-control" value="{{status.name}}">
         </div>
         <div class="mb-3">
             <label class="form-label">Срочность</label>
             <input type="text" class="form-control" value="{{urgency}}">
         </div>
-        <button type="submit" class="btn btn-danger">Отозвать заявку</button>
-        <button type="submit" class="btn btn-primary">Отправить дальше (лаборатория/ТСЦ/Производитель)</button>
-
-    </form>
+        <div class="mb-3">
+            <label class="form-label">Дата создания заявки</label>
+            <input type="text" class="form-control" value="{{date}}" disabled>
+        </div>
+        <div class="row">
+            <div class="col">
+                <!-- Scroll bar present and enabled when more contents -->
+                <div style="height: 20rem; overflow-y: scroll;">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Номер заявки</th>
+                            <th scope="col">Номер накладной</th>
+                            <th scope="col">Заявитель</th>
+                            <th scope="col">Техническое средство</th>
+                            <th scope="col">Статус</th>
+                            <th scope="col">История действий</th>
+                            <th scope="col">Срочность</th>
+                            <th scope="col">Дата</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for report in reports_history %}
+                        <tr>
+                            <th scope="row">{{ report.report_id }}</th>
+                            <th scope="col">{{ report.report1.nakl }}</th>
+                            <td>{{ report.user1.name }}</td>
+                            <td>{{ report.device }}</td>
+                            <td>{{ report.status1.name }}</td>
+                            <td>{{ report.description }}</td>
+                            <td>{{ report.urgency1.name }}</td>
+                            <td>{{ report.date }}</td>
+                        </tr>
+                        {% end %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        {% if status.id in [1, 3, 5] %}
+        <form action="/report/update" method="post" class="col">
+            <input type="text" name="report_id" value="{{id}}" hidden>
+            <input type="text" name="action" value="send" hidden>
+            <input type="text" id="status_send" name="status_send" value="" hidden>
+            <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отправить
+                {% if status.id == 1 %}
+                в лабораторию
+                {% elif status.id == 3 %}
+                в ТСЦ
+                {% elif status.id == 5 %}
+                производителю
+                {% end %}
+            </button>
+        </form>
+        {% end %}
+        {% if status.id in [2, 4] %}
+        <form action="/report/update" method="post" class="col">
+            <input type="text" name="report_id" value="{{id}}" hidden>
+            <input type="text" name="action" value="get" hidden>
+            <input type="text" id="status_send" name="status_send" value="" hidden>
+            <button type="submit" href="" class="btn btn-primary" onclick="sss()">Принять</button>
+        </form>
+        {% end %}
+        {% if status.id in [6, 3, 5] %}
+        <form action="/report/update" method="post" class="col">
+            <input type="text" name="report_id" value="{{id}}" hidden>
+            <input type="text" name="action" value="not_repair" hidden>
+            <input type="text" id="status_send" name="status_send" value="" hidden>
+            <button type="submit" href="" class="btn btn-primary" onclick="sss()">Неремонто пригодно</button>
+        </form>
+        {% end %}
+        {% if status.id in [6, 3, 5] %}
+            {% if status.id in [3] %}
+            <form action="/report/update" method="post" class="col">
+                <input type="text" name="report_id" value="{{id}}" hidden>
+                <input type="text" name="action" value="repair_in_lab" hidden>
+                <input type="text" id="status_send" name="status_send" value="" hidden>
+                <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отремонтировано</button>
+            </form>
+            {% elif status.id in [5] %}
+            <form action="/report/update" method="post" class="col">
+                <input type="text" name="report_id" value="{{id}}" hidden>
+                <input type="text" name="action" value="repair_in_tsc" hidden>
+                <input type="text" id="status_send" name="status_send" value="" hidden>
+                <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отремонтировано</button>
+            </form>
+            {% else %}
+            <form action="/report/update" method="post" class="col">
+                <input type="text" name="report_id" value="{{id}}" hidden>
+                <input type="text" name="action" value="repair" hidden>
+                <input type="text" id="status_send" name="status_send" value="" hidden>
+                <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отремонтировано</button>
+            </form>
+        {% end %}
+        {% end %}
+        {% if status.id in [7, 12] %}
+        <form action="/report/update" method="post" class="col">
+            <input type="text" name="report_id" value="{{id}}" hidden>
+            <input type="text" name="action" value="send_lab" hidden>
+            <input type="text" id="status_send" name="status_send" value="" hidden>
+            <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отправить в лабораторию</button>
+        </form>
+        {% end %}
+        {% if status.id in [9] %}
+        <form action="/report/update" method="post" class="col">
+            <input type="text" name="report_id" value="{{id}}" hidden>
+            <input type="text" name="action" value="send_ceh" hidden>
+            <input type="text" id="status_send" name="status_send" value="" hidden>
+            <button type="submit" href="" class="btn btn-primary" onclick="sss()">Отправить в цех</button>
+        </form>
+        {% end %}
+        </div>
 </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-<script src="js/jquery-3.6.0.js"></script>
-<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script>
+    function sss()
+    {
+        var val = document.getElementById("decr").value;
+        var elems = document.getElementsByName("status_send");
+        elems.forEach(function (item, i) {
+            item.value = val;
+            console.log(item.value);
+        })
+    }
+
+</script>
+
 <script>
 </script>
 </html>
